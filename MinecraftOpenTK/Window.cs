@@ -21,6 +21,7 @@ namespace MinecraftOpenTK
         public Block testBlock = new Grass(); // debug remove later
 
         public Chunk testChunk; // debug remove later
+        public Chunk anotherChunk;
 
         override protected void OnLoad()
         {
@@ -30,8 +31,8 @@ namespace MinecraftOpenTK
 
             // Set initial camera position.
             Camera.Position = new Vector3(0.0f, 0.25f, 0.0f);
-            testChunk = new Chunk();
-
+            testChunk = new Chunk(new Vector2i(0, 0));
+            anotherChunk = new Chunk(new Vector2i(2, 0));
             testBlock.Initialize();
 
             // Once done loading, show the window.
@@ -47,7 +48,7 @@ namespace MinecraftOpenTK
 
             CursorState = CursorState.Grabbed;
             testChunk.Render(Camera.ViewMatrix, ProjectionMatrix);
-            //testBlock.Render(Camera.ViewMatrix, ProjectionMatrix);
+            anotherChunk.Render(Camera.ViewMatrix, ProjectionMatrix);
 
             Title = Camera.Position.ToString();
             SwapBuffers();
@@ -65,7 +66,8 @@ namespace MinecraftOpenTK
             if (KB.IsKeyDown(Keys.F5))
             {
                 GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
-            }else if (KB.IsKeyDown(Keys.F6))
+            }
+            else if (KB.IsKeyDown(Keys.F6))
             {
                 GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
             }
@@ -73,19 +75,19 @@ namespace MinecraftOpenTK
 
             if (KB.IsKeyDown(Keys.W))
                 Camera.Position += new Vector3(-(float)MathHelper.Sin(MathHelper.DegreesToRadians(Camera.Rotation.Y)),
-                    0.0f, 
+                    0.0f,
                     -(float)MathHelper.Cos(MathHelper.DegreesToRadians(Camera.Rotation.Y))) * (float)DT * playerSpeed;
             if (KB.IsKeyDown(Keys.A))
-                Camera.Position += new Vector3(-(float)MathHelper.Cos(MathHelper.DegreesToRadians(Camera.Rotation.Y)), 
-                    0.0f, 
+                Camera.Position += new Vector3(-(float)MathHelper.Cos(MathHelper.DegreesToRadians(Camera.Rotation.Y)),
+                    0.0f,
                     (float)MathHelper.Sin(MathHelper.DegreesToRadians(Camera.Rotation.Y))) * (float)DT * playerSpeed;
             if (KB.IsKeyDown(Keys.S))
-                Camera.Position += new Vector3((float)MathHelper.Sin(MathHelper.DegreesToRadians(Camera.Rotation.Y)), 
-                    0.0f, 
+                Camera.Position += new Vector3((float)MathHelper.Sin(MathHelper.DegreesToRadians(Camera.Rotation.Y)),
+                    0.0f,
                     (float)MathHelper.Cos(MathHelper.DegreesToRadians(Camera.Rotation.Y))) * (float)DT * playerSpeed;
             if (KB.IsKeyDown(Keys.D))
-                Camera.Position += new Vector3((float)MathHelper.Cos(MathHelper.DegreesToRadians(Camera.Rotation.Y)), 
-                    0.0f, 
+                Camera.Position += new Vector3((float)MathHelper.Cos(MathHelper.DegreesToRadians(Camera.Rotation.Y)),
+                    0.0f,
                     -(float)MathHelper.Sin(MathHelper.DegreesToRadians(Camera.Rotation.Y))) * (float)DT * playerSpeed;
             if (KB.IsKeyDown(Keys.Space))
                 Camera.Position += new Vector3(0.0f, 1.0f, 0.0f) * (float)DT * playerSpeed;
@@ -93,6 +95,35 @@ namespace MinecraftOpenTK
                 Camera.Position += new Vector3(0.0f, -1.0f, 0.0f) * (float)DT * playerSpeed;
 
             Camera.Rotation += new Vector3(-MS.Delta.Y, -MS.Delta.X, 0.0f) * 0.1f;
+
+
+
+
+            if (MS.IsButtonDown(MouseButton.Left))
+            {
+                // Destroy block
+                try
+                {
+                    testChunk.Data[(int)Camera.Position.X, (int)Camera.Position.Y, (int)Camera.Position.Z] = null;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error destroying block: {ex.Message}");
+                }
+            }
+            else if (MS.IsButtonDown(MouseButton.Right))
+            {
+                // Place block
+                try
+                {
+                    testChunk.Data[(int)Camera.Position.X, (int)Camera.Position.Y, (int)Camera.Position.Z] = new Stone() { Position = new Vector3i((int)Camera.Position.X, (int)Camera.Position.Y, (int)Camera.Position.Z) };
+                    testChunk.Data[(int)Camera.Position.X, (int)Camera.Position.Y, (int)Camera.Position.Z].Initialize();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error placing block: {ex.Message}");
+                }
+            }
         }
 
         protected override void OnFramebufferResize(FramebufferResizeEventArgs e) => UpdateFrameViewport();

@@ -11,7 +11,7 @@ namespace MinecraftOpenTK.GameObjects.Base
         private Plane[] planes = new Plane[6];
         protected Texture[] textures = new Texture[6];
 
-        internal Vector3 Position { get; set; } = Vector3.Zero;
+        internal Vector3i Position { get; set; } = Vector3i.Zero;
 
         internal void Initialize()
         {
@@ -52,11 +52,19 @@ namespace MinecraftOpenTK.GameObjects.Base
             }
         }
 
-        internal void Render(Matrix4 viewMatrix, Matrix4 projectionMatrix)
+        internal void Render(Matrix4 viewMatrix, Matrix4 projectionMatrix, bool[]? visibleFaces = null)
         {
+            if (visibleFaces == null)
+            {
+                for (int i = 0; i < planes.Length; i++)
+                {
+                    planes[i].Render(viewMatrix, projectionMatrix);
+                }
+                return;
+            }
             for (int i = 0; i < planes.Length; i++)
             {
-                planes[i].Render(viewMatrix, projectionMatrix);
+                if (visibleFaces[i]) planes[i].Render(viewMatrix, projectionMatrix);
             }
         }
     }
