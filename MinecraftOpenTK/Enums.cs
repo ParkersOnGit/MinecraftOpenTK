@@ -6,5 +6,10 @@
         {
             None = 0
         }
+
+        internal enum BlockFaces
+        {
+            Top, Bottom, Front, Back, Left, Right
+        }
     }
 }
