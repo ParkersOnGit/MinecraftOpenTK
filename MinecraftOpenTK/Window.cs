@@ -2,6 +2,7 @@
 using MinecraftOpenTK.GameObjects.Base;
 using MinecraftOpenTK.GameObjects.Blocks;
 using MinecraftOpenTK.Loaders;
+using MinecraftOpenTK.World;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -19,6 +20,8 @@ namespace MinecraftOpenTK
 
         public Block testBlock = new Grass(); // debug remove later
 
+        public Chunk testChunk; // debug remove later
+
         override protected void OnLoad()
         {
             base.OnLoad();
@@ -27,7 +30,7 @@ namespace MinecraftOpenTK
 
             // Set initial camera position.
             Camera.Position = new Vector3(0.0f, 0.25f, 0.0f);
-
+            testChunk = new Chunk();
 
             testBlock.Initialize();
 
@@ -43,8 +46,8 @@ namespace MinecraftOpenTK
             Camera.Update();
 
             CursorState = CursorState.Grabbed;
-
-            testBlock.Render(Camera.ViewMatrix, ProjectionMatrix);
+            testChunk.Render(Camera.ViewMatrix, ProjectionMatrix);
+            //testBlock.Render(Camera.ViewMatrix, ProjectionMatrix);
 
             Title = Camera.Position.ToString();
             SwapBuffers();
@@ -57,6 +60,16 @@ namespace MinecraftOpenTK
             KeyboardState KB = KeyboardState;
             MouseState MS = MouseState;
             float playerSpeed = 5.0f;
+
+
+            if (KB.IsKeyDown(Keys.F5))
+            {
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+            }else if (KB.IsKeyDown(Keys.F6))
+            {
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            }
+
 
             if (KB.IsKeyDown(Keys.W))
                 Camera.Position += new Vector3(-(float)MathHelper.Sin(MathHelper.DegreesToRadians(Camera.Rotation.Y)),

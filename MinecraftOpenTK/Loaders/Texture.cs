@@ -8,6 +8,8 @@ namespace MinecraftOpenTK.Loaders
     {
         private int Handle;
 
+        private static Dictionary<(string, int), Texture> textureCache = new Dictionary<(string, int), Texture>();
+
         /// <summary>
         /// Loads a 2D texture from a specified file path and index.
         /// </summary>
@@ -15,6 +17,9 @@ namespace MinecraftOpenTK.Loaders
         /// <param name="index">The index of which is on the atlas (-1 for entire texture).</param>
         internal static Texture LoadFromFile(string filePath, int index = -1)
         {
+            // Return the previous texture if all the same parameters are used.
+            if (textureCache.ContainsKey((filePath, index))) return textureCache[(filePath, index)];
+
             // Create temporary handle to load the texture.
             int tempHandle = GL.GenTexture();
 
@@ -58,7 +63,11 @@ namespace MinecraftOpenTK.Loaders
             // Generate mipmaps for the texture.
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
-            return new Texture(tempHandle);
+            // Cache the texture for later use.
+            Texture newTexture = new Texture(tempHandle);
+            textureCache.Add((filePath, index), newTexture);
+
+            return newTexture;
         }
     
         internal Texture(int handle)

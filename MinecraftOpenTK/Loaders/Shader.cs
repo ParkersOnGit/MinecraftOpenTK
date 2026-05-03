@@ -7,11 +7,19 @@ namespace MinecraftOpenTK.Loaders
     {
         private int Handle;
         private Dictionary<string, int> uniformLocations = new Dictionary<string, int>();
+        private static Dictionary<(string, string), Shader> shaderCache = new Dictionary<(string, string), Shader>();
 
         internal void Use() => GL.UseProgram(Handle);
 
         internal Shader(string vertexPath, string fragmentPath)
         {
+            if (shaderCache.ContainsKey((vertexPath, fragmentPath)))
+            {
+                Handle = shaderCache[(vertexPath, fragmentPath)].Handle;
+                uniformLocations = shaderCache[(vertexPath, fragmentPath)].uniformLocations;
+                return;
+            }
+
             // Read the shader source code.
             string vertexShaderSource = File.ReadAllText(vertexPath);
             string fragmentShaderSource = File.ReadAllText(fragmentPath);
@@ -69,6 +77,9 @@ namespace MinecraftOpenTK.Loaders
                 int location = GL.GetUniformLocation(Handle, name);
                 uniformLocations.Add(name, location);
             }
+
+            // Cache the shader for later use.
+            shaderCache.Add((vertexPath, fragmentPath), this);
         }
 
         internal void SetMatrix4(string name, Matrix4 data)

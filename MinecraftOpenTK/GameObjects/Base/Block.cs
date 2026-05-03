@@ -11,6 +11,8 @@ namespace MinecraftOpenTK.GameObjects.Base
         private Plane[] planes = new Plane[6];
         protected Texture[] textures = new Texture[6];
 
+        internal Vector3 Position { get; set; } = Vector3.Zero;
+
         internal void Initialize()
         {
             for (int i = 0; i < planes.Length; i++)
@@ -46,6 +48,7 @@ namespace MinecraftOpenTK.GameObjects.Base
                         planes[i].Rotation = new Vector3(0.0f, 90.0f, -90.0f);
                         break;
                 }
+                planes[i].Position += Position;
             }
         }
 
