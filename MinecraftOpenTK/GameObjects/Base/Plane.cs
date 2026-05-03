@@ -17,6 +17,7 @@ namespace MinecraftOpenTK.GameObjects.Base
 
         internal Vector3 Position { get; set; } = Vector3.Zero;
         internal Vector3 Rotation { get; set; } = Vector3.Zero;
+        internal Vector3 Scale { get; set; } = Vector3.One;
 
         internal string VertexShaderPath { get; set; }
         internal string FragmentShaderPath { get; set; }
@@ -93,10 +94,15 @@ namespace MinecraftOpenTK.GameObjects.Base
             // Reset the model matrix.
             modelMatrix = Matrix4.Identity;
 
+            // Apply scaling.
+            modelMatrix *= Matrix4.CreateScale(Scale);
+
+            // Apply rotation.
             modelMatrix *= Matrix4.CreateRotationY(MathHelper.DegreesToRadians(Rotation.Y)) *
                 Matrix4.CreateRotationX(MathHelper.DegreesToRadians(Rotation.X)) *
                 Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(Rotation.Z));
 
+            // Apply translation.
             modelMatrix *= Matrix4.CreateTranslation(Position);
         }
     }

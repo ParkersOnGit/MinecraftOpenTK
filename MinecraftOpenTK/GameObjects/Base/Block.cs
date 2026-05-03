@@ -4,21 +4,12 @@ using static MinecraftOpenTK.Enums;
 
 namespace MinecraftOpenTK.GameObjects.Base
 {
-    internal struct BlockTexture
+    internal abstract class Block
     {
-        internal Texture topTexture { get; set; }
-        internal Texture bottomTexture { get; set; }
-        internal Texture frontTexture { get; set; }
-        internal Texture backTexture { get; set; }
-        internal Texture leftTexture { get; set; }
-        internal Texture rightTexture { get; set; }
-    }
-
-    internal class Block // RETURN THIS TO AN ABSTRACT CLASS LATER
-    {
-        protected BlockType Type { get; private set; }
+        protected BlockType Type { get; set; }
 
         private Plane[] planes = new Plane[6];
+        protected Texture[] textures = new Texture[6];
 
         internal void Initialize()
         {
@@ -27,32 +18,32 @@ namespace MinecraftOpenTK.GameObjects.Base
                 planes[i] = new Plane();
                 planes[i].VertexShaderPath = "../../../Assets/Shaders/Default.vert";
                 planes[i].FragmentShaderPath = "../../../Assets/Shaders/Block.frag";
-                planes[i].Texture = Texture.LoadFromFile($"../../../Assets/Textures/TextureAtlas.png");
+                planes[i].Texture = Texture.LoadFromFile($"../../../Assets/Textures/TextureAtlas.png", Type.ToTextureCoordinates()[i]);
                 planes[i].Initialize();
 
-                switch ((BlockFaces)i)
+                switch ((BlockFace)i)
                 {
-                    case BlockFaces.Top:
+                    case BlockFace.Top:
                         planes[i].Position = new Vector3(0.0f, 0.5f, 0.0f);
                         break;
-                    case BlockFaces.Bottom:
+                    case BlockFace.Bottom:
                         planes[i].Position = new Vector3(0.0f, -0.5f, 0.0f);
                         break;
-                    case BlockFaces.Front:
+                    case BlockFace.Front:
                         planes[i].Position = new Vector3(0.0f, 0.0f, 0.5f);
                         planes[i].Rotation = new Vector3(90.0f, 0.0f, 0.0f);
                         break;
-                    case BlockFaces.Back:
+                    case BlockFace.Back:
                         planes[i].Position = new Vector3(0.0f, 0.0f, -0.5f);
-                        planes[i].Rotation = new Vector3(-90.0f, 0.0f, 0.0f);
+                        planes[i].Rotation = new Vector3(-90.0f, 180.0f, 0.0f);
                         break;
-                    case BlockFaces.Left:
+                    case BlockFace.Left:
                         planes[i].Position = new Vector3(-0.5f, 0.0f, 0.0f);
-                        planes[i].Rotation = new Vector3(0.0f, 0.0f, 90.0f);
+                        planes[i].Rotation = new Vector3(0.0f, -90.0f, 90.0f);
                         break;
-                    case BlockFaces.Right:
+                    case BlockFace.Right:
                         planes[i].Position = new Vector3(0.5f, 0.0f, 0.0f);
-                        planes[i].Rotation = new Vector3(0.0f, 0.0f, -90.0f);
+                        planes[i].Rotation = new Vector3(0.0f, 90.0f, -90.0f);
                         break;
                 }
             }

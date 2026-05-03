@@ -15,7 +15,7 @@
   <ItemGroup>
     <Folder Include="Assets\Shaders\" />
     <Folder Include="Assets\Textures\" />
-    <Folder Include="GameObjects\Blocks\" />
+    <Folder Include="Managers\" />
   </ItemGroup>
 
 </Project>

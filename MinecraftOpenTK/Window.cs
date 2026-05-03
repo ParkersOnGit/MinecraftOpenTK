@@ -1,5 +1,6 @@
 ﻿using MinecraftOpenTK.GameObjects;
 using MinecraftOpenTK.GameObjects.Base;
+using MinecraftOpenTK.GameObjects.Blocks;
 using MinecraftOpenTK.Loaders;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
@@ -16,8 +17,7 @@ namespace MinecraftOpenTK
         internal Matrix4 ProjectionMatrix { get; private set; } = Matrix4.Identity;
         internal Camera Camera { get; private set; } = new Camera();
 
-        public Plane testPlane = new Plane(); // debug remove later
-        public Block testBlock = new Block(); // debug remove later
+        public Block testBlock = new Grass(); // debug remove later
 
         override protected void OnLoad()
         {
@@ -28,11 +28,6 @@ namespace MinecraftOpenTK
             // Set initial camera position.
             Camera.Position = new Vector3(0.0f, 0.25f, 0.0f);
 
-            testPlane.VertexShaderPath = "../../../Assets/Shaders/Default.vert";
-            testPlane.FragmentShaderPath = "../../../Assets/Shaders/Block.frag";
-            testPlane.Texture = Texture.LoadFromFile($"../../../Assets/Textures/TextureAtlas.png");
-            testPlane.Texture.Use(TextureUnit.Texture0);
-            testPlane.Initialize();
 
             testBlock.Initialize();
 
@@ -47,6 +42,7 @@ namespace MinecraftOpenTK
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             Camera.Update();
 
+            CursorState = CursorState.Grabbed;
 
             testBlock.Render(Camera.ViewMatrix, ProjectionMatrix);
 
@@ -59,6 +55,7 @@ namespace MinecraftOpenTK
             base.OnUpdateFrame(e);
             double DT = e.Time;
             KeyboardState KB = KeyboardState;
+            MouseState MS = MouseState;
             float playerSpeed = 5.0f;
 
             if (KB.IsKeyDown(Keys.W))
@@ -81,6 +78,8 @@ namespace MinecraftOpenTK
                 Camera.Position += new Vector3(0.0f, 1.0f, 0.0f) * (float)DT * playerSpeed;
             if (KB.IsKeyDown(Keys.LeftShift))
                 Camera.Position += new Vector3(0.0f, -1.0f, 0.0f) * (float)DT * playerSpeed;
+
+            Camera.Rotation += new Vector3(-MS.Delta.Y, -MS.Delta.X, 0.0f) * 0.1f;
         }
 
         protected override void OnFramebufferResize(FramebufferResizeEventArgs e) => UpdateFrameViewport();

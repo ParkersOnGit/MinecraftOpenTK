@@ -20,14 +20,33 @@ namespace MinecraftOpenTK.Loaders
 
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, tempHandle);
-
-            using (var btmp = new Bitmap(filePath))
+            if (index == -1)
             {
-                // Get the data from the bitmap by locking into memory.
-                BitmapData data = btmp.LockBits(new Rectangle(0, 0, btmp.Width, btmp.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                btmp.UnlockBits(data);
+                using (var btmp = new Bitmap(filePath))
+                {
+                    // Get the data from the bitmap by locking into memory.
+                    BitmapData data = btmp.LockBits(new Rectangle(0, 0, btmp.Width, btmp.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                    btmp.UnlockBits(data);
 
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, btmp.Width, btmp.Height, 0, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+                    GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, btmp.Width, btmp.Height, 0, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+                }
+            }
+            else
+            {
+                using (var btmp = new Bitmap(16, 16))
+                {
+                    using (var atlas = new Bitmap(filePath))
+                    {
+                        using (var g = Graphics.FromImage(btmp))
+                        {
+                            g.DrawImage(atlas, new Rectangle(0, 0, 16, 16), new Rectangle(index * 16, 0, 16, 16), GraphicsUnit.Pixel);
+                        }
+                        // Get the data from the bitmap by locking into memory.
+                        BitmapData data = btmp.LockBits(new Rectangle(0, 0, btmp.Width, btmp.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                        btmp.UnlockBits(data);
+                        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, btmp.Width, btmp.Height, 0, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+                    }
+                }
             }
 
             // Set the texture parameters.
