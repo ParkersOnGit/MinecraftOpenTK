@@ -1,5 +1,6 @@
 ﻿using MinecraftOpenTK.GameObjects;
 using MinecraftOpenTK.GameObjects.Base;
+using MinecraftOpenTK.Loaders;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -22,12 +23,15 @@ namespace MinecraftOpenTK
         {
             base.OnLoad();
             GL.ClearColor(0.59f, 0.84f, 1.00f, 1.00f);
+            GL.Enable(EnableCap.DepthTest);
 
             // Set initial camera position.
-            Camera.Position = new Vector3(0.0f, 0.5f, 0.0f);
+            Camera.Position = new Vector3(0.0f, 0.25f, 0.0f);
 
             testPlane.VertexShaderPath = "../../../Assets/Shaders/Default.vert";
-            testPlane.FragmentShaderPath = "../../../Assets/Shaders/Default.frag";
+            testPlane.FragmentShaderPath = "../../../Assets/Shaders/Block.frag";
+            testPlane.Texture = Texture.LoadFromFile($"../../../Assets/Textures/TextureAtlas.png");
+            testPlane.Texture.Use(TextureUnit.Texture0);
             testPlane.Initialize();
 
             testBlock.Initialize();
@@ -40,10 +44,9 @@ namespace MinecraftOpenTK
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             Camera.Update();
 
-            //testPlane.Render(Camera.ViewMatrix, ProjectionMatrix);
 
             testBlock.Render(Camera.ViewMatrix, ProjectionMatrix);
 

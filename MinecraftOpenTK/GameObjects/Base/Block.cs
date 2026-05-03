@@ -1,8 +1,19 @@
-﻿using OpenTK.Mathematics;
+﻿using MinecraftOpenTK.Loaders;
+using OpenTK.Mathematics;
 using static MinecraftOpenTK.Enums;
 
 namespace MinecraftOpenTK.GameObjects.Base
 {
+    internal struct BlockTexture
+    {
+        internal Texture topTexture { get; set; }
+        internal Texture bottomTexture { get; set; }
+        internal Texture frontTexture { get; set; }
+        internal Texture backTexture { get; set; }
+        internal Texture leftTexture { get; set; }
+        internal Texture rightTexture { get; set; }
+    }
+
     internal class Block // RETURN THIS TO AN ABSTRACT CLASS LATER
     {
         protected BlockType Type { get; private set; }
@@ -15,7 +26,8 @@ namespace MinecraftOpenTK.GameObjects.Base
             {
                 planes[i] = new Plane();
                 planes[i].VertexShaderPath = "../../../Assets/Shaders/Default.vert";
-                planes[i].FragmentShaderPath = "../../../Assets/Shaders/Default.frag";
+                planes[i].FragmentShaderPath = "../../../Assets/Shaders/Block.frag";
+                planes[i].Texture = Texture.LoadFromFile($"../../../Assets/Textures/TextureAtlas.png");
                 planes[i].Initialize();
 
                 switch ((BlockFaces)i)

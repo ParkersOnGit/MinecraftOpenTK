@@ -10,7 +10,9 @@ namespace MinecraftOpenTK.GameObjects.Base
         private int elementBufferObject;
         private int vertexArrayObject;
 
+        internal Texture Texture { get; set; }
         private Shader shader;
+
         private Matrix4 modelMatrix;
 
         internal Vector3 Position { get; set; } = Vector3.Zero;
@@ -76,6 +78,7 @@ namespace MinecraftOpenTK.GameObjects.Base
             Update();
 
             GL.BindVertexArray(vertexArrayObject);
+            Texture.Use(TextureUnit.Texture0);
 
             shader.SetMatrix4("model", modelMatrix);
             shader.SetMatrix4("view", viewMatrix);
