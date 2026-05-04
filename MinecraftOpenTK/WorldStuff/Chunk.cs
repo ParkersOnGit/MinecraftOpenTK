@@ -2,7 +2,7 @@
 using MinecraftOpenTK.GameObjects.Blocks;
 using OpenTK.Mathematics;
 
-namespace MinecraftOpenTK.World
+namespace MinecraftOpenTK.WorldStuff
 {
     internal class Chunk
     {

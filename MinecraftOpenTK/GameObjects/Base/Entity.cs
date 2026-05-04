@@ -5,6 +5,11 @@ namespace MinecraftOpenTK.GameObjects.Base
     internal abstract class Entity
     {
         internal Vector3 Position { get; set; }
+        internal Vector2i ChunkPosition
+        {
+            get => new Vector2i((int)MathHelper.Floor(Position.X / 16.0f), (int)MathHelper.Floor(Position.Z / 16.0f));
+        }
+
         internal Vector3 Rotation { get; set; }
         private Vector3 scale;
         internal Vector3 Scale

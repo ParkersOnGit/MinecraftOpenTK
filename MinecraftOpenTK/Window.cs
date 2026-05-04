@@ -2,7 +2,7 @@
 using MinecraftOpenTK.GameObjects.Base;
 using MinecraftOpenTK.GameObjects.Blocks;
 using MinecraftOpenTK.Loaders;
-using MinecraftOpenTK.World;
+using MinecraftOpenTK.WorldStuff;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -22,6 +22,8 @@ namespace MinecraftOpenTK
 
         public Chunk testChunk; // debug remove later
         public Chunk anotherChunk;
+
+        private World world = new World(); // probably debug, may remove later.
 
         override protected void OnLoad()
         {
@@ -47,10 +49,13 @@ namespace MinecraftOpenTK
             Camera.Update();
 
             CursorState = CursorState.Grabbed;
-            testChunk.Render(Camera.ViewMatrix, ProjectionMatrix);
-            anotherChunk.Render(Camera.ViewMatrix, ProjectionMatrix);
+            //testChunk.Render(Camera.ViewMatrix, ProjectionMatrix);
+            //anotherChunk.Render(Camera.ViewMatrix, ProjectionMatrix);
+            world.LoadChunk(Camera.ChunkPosition);
 
-            Title = Camera.Position.ToString();
+            world.RenderLoadedChunks(Camera.ViewMatrix, ProjectionMatrix);
+
+            Title = Camera.Position.ToString() + " | " + Camera.ChunkPosition.ToString() + "   FPS: " + (1f / e.Time);
             SwapBuffers();
         }
 
